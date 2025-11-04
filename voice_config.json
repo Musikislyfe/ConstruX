@@ -1,0 +1,31 @@
+{
+  "speech_recognition": {
+    "language": "en-US",
+    "energy_threshold": 4000,
+    "pause_threshold": 0.8,
+    "phrase_time_limit": 15,
+    "dynamic_energy_threshold": true
+  },
+  "text_to_speech": {
+    "rate": 175,
+    "volume": 0.9,
+    "voice_id": 0
+  },
+  "hotkeys": {
+    "toggle_voice_mode": "ctrl+shift+v",
+    "push_to_talk": "ctrl+space",
+    "stop_speaking": "ctrl+shift+s"
+  },
+  "behavior": {
+    "auto_speak_responses": true,
+    "confirmation_sound": true,
+    "show_transcript": true,
+    "wake_word_enabled": false,
+    "wake_word": "hey claude"
+  },
+  "advanced": {
+    "microphone_index": null,
+    "sample_rate": 16000,
+    "chunk_size": 1024
+  }
+}
