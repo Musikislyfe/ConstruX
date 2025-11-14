@@ -2,7 +2,10 @@
 
 # Speech Recognition
 SpeechRecognition>=3.10.0
-PyAudio>=0.2.13
+
+# Audio I/O (replaces PyAudio with sounddevice)
+sounddevice>=0.4.6
+numpy>=1.20.0
 
 # Text-to-Speech
 pyttsx3>=2.90

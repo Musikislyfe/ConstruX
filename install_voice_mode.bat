@@ -33,10 +33,10 @@ python -m pip install -r requirements.txt
 if errorlevel 1 (
     echo.
     echo [WARNING] Some dependencies may have failed to install.
-    echo If PyAudio failed, try:
-    echo   1. pip install pipwin
-    echo   2. pipwin install pyaudio
-    echo Or download wheel from: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
+    echo sounddevice should work out-of-the-box on Windows.
+    echo If you encounter audio issues, ensure you have:
+    echo   - Latest Visual C++ Redistributable installed
+    echo   - Working audio drivers
     echo.
 )
 

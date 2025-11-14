@@ -51,16 +51,17 @@ if [ "$PLATFORM" = "Linux" ]; then
     if command -v apt-get &> /dev/null; then
         echo "Using apt-get..."
         sudo apt-get update
-        sudo apt-get install -y python3-pyaudio portaudio19-dev xclip
+        sudo apt-get install -y libsndfile1 libportaudio2 xclip
     elif command -v yum &> /dev/null; then
         echo "Using yum..."
-        sudo yum install -y python3-pyaudio portaudio-devel xclip
+        sudo yum install -y libsndfile portaudio xclip
     elif command -v pacman &> /dev/null; then
         echo "Using pacman..."
-        sudo pacman -S --noconfirm python-pyaudio portaudio xclip
+        sudo pacman -S --noconfirm libsndfile portaudio xclip
     else
         echo "⚠️  Could not detect package manager. Please install:"
-        echo "   - portaudio (for PyAudio)"
+        echo "   - libsndfile (for sounddevice)"
+        echo "   - portaudio (for sounddevice)"
         echo "   - xclip (for clipboard support)"
     fi
 
@@ -69,18 +70,17 @@ elif [ "$PLATFORM" = "macOS" ]; then
 
     if command -v brew &> /dev/null; then
         echo "Using Homebrew..."
-        brew install portaudio
+        brew install libsndfile portaudio
     else
         echo "⚠️  Homebrew not found. Please install Homebrew first:"
         echo "   /bin/bash -c \"\$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)\""
-        echo "   Then run: brew install portaudio"
+        echo "   Then run: brew install libsndfile portaudio"
     fi
 
 elif [ "$PLATFORM" = "Windows" ]; then
     echo "Windows detected."
-    echo "⚠️  On Windows, you may need to install PyAudio manually:"
-    echo "   Download from: https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio"
-    echo "   Or use: pip install pipwin && pipwin install pyaudio"
+    echo "✓ sounddevice should work out-of-the-box on Windows"
+    echo "   If you encounter issues, ensure you have the latest Visual C++ Redistributable"
 fi
 
 echo ""

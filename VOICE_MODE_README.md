@@ -6,6 +6,7 @@ Enable hands-free interaction with Claude Code using voice commands! This script
 
 - **Speech-to-Text**: Speak your commands and questions to Claude Code
 - **Text-to-Speech**: Hear Claude's responses read aloud
+- **sounddevice Backend**: Uses sounddevice for reliable, cross-platform audio I/O (replaces PyAudio)
 - **Hotkey Control**: Easy keyboard shortcuts for voice control
 - **Push-to-Talk**: Hold a key to speak, release to send
 - **Continuous Listening**: Hands-free mode with voice activation
@@ -45,22 +46,22 @@ pip install -r requirements.txt
 
 **Linux (Ubuntu/Debian)**
 ```bash
-sudo apt-get install python3-pyaudio portaudio19-dev xclip
+sudo apt-get install libsndfile1 libportaudio2 xclip
 ```
 
 **Linux (Fedora/RHEL)**
 ```bash
-sudo yum install python3-pyaudio portaudio-devel xclip
+sudo yum install libsndfile portaudio xclip
 ```
 
 **macOS**
 ```bash
-brew install portaudio
+brew install libsndfile portaudio
 ```
 
 **Windows**
-- Download PyAudio wheel from [here](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
-- Or use: `pip install pipwin && pipwin install pyaudio`
+- sounddevice works out-of-the-box on Windows
+- Ensure you have the latest Visual C++ Redistributable if you encounter issues
 
 ## Usage
 
@@ -233,23 +234,21 @@ text = voice.listen()
 - Check internet connection (Google Speech Recognition requires internet)
 - Consider offline alternative: Whisper (uncomment in requirements.txt)
 
-### PyAudio Installation Issues
+### sounddevice Installation Issues
 
-**Linux**: Install PortAudio development files
+**Linux**: Install libsndfile and PortAudio
 ```bash
-sudo apt-get install portaudio19-dev
+sudo apt-get install libsndfile1 libportaudio2
 ```
 
 **macOS**: Install via Homebrew
 ```bash
-brew install portaudio
+brew install libsndfile portaudio
 ```
 
-**Windows**: Use pre-built wheel
-```bash
-pip install pipwin
-pipwin install pyaudio
-```
+**Windows**: Usually works out-of-the-box
+- If issues persist, ensure Visual C++ Redistributable is installed
+- Check that audio drivers are up to date
 
 ### Hotkeys Not Working
 
@@ -318,6 +317,18 @@ Modify voice_mode.py to use Whisper instead of Google Speech Recognition.
 2. **Improve accuracy**: Speak clearly, reduce background noise
 3. **Save bandwidth**: Use offline Whisper for speech recognition
 4. **Faster TTS**: Increase `rate` to 200-250
+
+## Why sounddevice?
+
+This implementation uses **sounddevice** instead of PyAudio for several advantages:
+
+- **Easier Installation**: No complex C dependencies or compilation issues
+- **Better Cross-Platform Support**: Works out-of-the-box on Windows, easier on Linux/macOS
+- **More Reliable**: Built on modern audio libraries (PortAudio + libsndfile)
+- **Active Development**: Regular updates and better maintenance
+- **Lower Latency**: More efficient audio processing
+
+The migration from PyAudio to sounddevice maintains full compatibility with SpeechRecognition while providing a smoother installation experience.
 
 ## Privacy & Security
 

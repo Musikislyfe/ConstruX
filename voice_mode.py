@@ -13,7 +13,8 @@ Features:
 
 import speech_recognition as sr
 import pyttsx3
-import pyaudio
+import sounddevice as sd
+import numpy as np
 import json
 import os
 import sys
@@ -33,7 +34,11 @@ class VoiceMode:
 
         # Initialize speech recognition
         self.recognizer = sr.Recognizer()
-        self.microphone = sr.Microphone()
+
+        # Audio configuration for sounddevice
+        self.sample_rate = self.config.get("advanced", {}).get("sample_rate", 16000)
+        self.channels = 1  # Mono audio
+        self.dtype = np.int16
 
         # Initialize text-to-speech
         self.tts_engine = pyttsx3.init()
@@ -47,11 +52,12 @@ class VoiceMode:
         # Queue for managing speech output
         self.speech_queue = queue.Queue()
 
-        # Adjust for ambient noise
-        print("Calibrating microphone for ambient noise...")
-        with self.microphone as source:
-            self.recognizer.adjust_for_ambient_noise(source, duration=2)
-        print("Microphone calibrated!")
+        # Set recognizer properties
+        self.recognizer.energy_threshold = self.config["speech_recognition"]["energy_threshold"]
+        self.recognizer.pause_threshold = self.config["speech_recognition"]["pause_threshold"]
+        self.recognizer.dynamic_energy_threshold = self.config["speech_recognition"].get("dynamic_energy_threshold", True)
+
+        print("✓ Voice mode initialized with sounddevice backend")
 
     def load_config(self):
         """Load configuration from JSON file"""
@@ -127,39 +133,69 @@ class VoiceMode:
         finally:
             self.is_speaking = False
 
+    def record_audio_sounddevice(self, duration=None, phrase_time_limit=None):
+        """Record audio using sounddevice with voice activity detection"""
+        if phrase_time_limit is None:
+            phrase_time_limit = self.config["speech_recognition"]["phrase_time_limit"]
+
+        if duration is None:
+            duration = phrase_time_limit
+
+        print("\n🎤 Listening...")
+        self.is_listening = True
+
+        try:
+            # Record audio
+            recording = sd.rec(
+                int(duration * self.sample_rate),
+                samplerate=self.sample_rate,
+                channels=self.channels,
+                dtype=self.dtype
+            )
+            sd.wait()  # Wait until recording is finished
+
+            # Convert to bytes for SpeechRecognition
+            audio_data = recording.tobytes()
+
+            return audio_data
+        except Exception as e:
+            print(f"❌ Recording error: {e}")
+            return None
+        finally:
+            self.is_listening = False
+
     def listen(self, timeout=None, phrase_time_limit=None):
-        """Listen for voice input and convert to text"""
+        """Listen for voice input and convert to text using sounddevice"""
         if phrase_time_limit is None:
             phrase_time_limit = self.config["speech_recognition"]["phrase_time_limit"]
 
         try:
-            with self.microphone as source:
-                print("\n🎤 Listening...")
-                self.is_listening = True
+            # Record audio using sounddevice
+            audio_data = self.record_audio_sounddevice(
+                duration=phrase_time_limit,
+                phrase_time_limit=phrase_time_limit
+            )
 
-                audio = self.recognizer.listen(
-                    source,
-                    timeout=timeout,
-                    phrase_time_limit=phrase_time_limit
-                )
+            if audio_data is None:
+                return None
 
-                self.is_listening = False
-                print("🔄 Processing speech...")
+            self.is_listening = False
+            print("🔄 Processing speech...")
 
-                # Recognize speech using Google Speech Recognition
-                text = self.recognizer.recognize_google(
-                    audio,
-                    language=self.config["speech_recognition"]["language"]
-                )
+            # Create AudioData object for SpeechRecognition
+            audio = sr.AudioData(audio_data, self.sample_rate, 2)  # 2 bytes per sample for int16
 
-                if self.config["behavior"]["show_transcript"]:
-                    print(f"📝 Transcript: {text}")
+            # Recognize speech using Google Speech Recognition
+            text = self.recognizer.recognize_google(
+                audio,
+                language=self.config["speech_recognition"]["language"]
+            )
 
-                return text
+            if self.config["behavior"]["show_transcript"]:
+                print(f"📝 Transcript: {text}")
 
-        except sr.WaitTimeoutError:
-            print("⏱️  No speech detected")
-            return None
+            return text
+
         except sr.UnknownValueError:
             print("❓ Could not understand audio")
             return None
@@ -277,9 +313,13 @@ class VoiceMode:
 
     def list_audio_devices(self):
         """List available audio input devices"""
-        print("\n🎤 Available Audio Devices:")
-        for index, name in enumerate(sr.Microphone.list_microphone_names()):
-            print(f"  [{index}] {name}")
+        print("\n🎤 Available Audio Input Devices:")
+        devices = sd.query_devices()
+        for index, device in enumerate(devices):
+            if device['max_input_channels'] > 0:
+                default = " (DEFAULT)" if index == sd.default.device[0] else ""
+                print(f"  [{index}] {device['name']}{default}")
+                print(f"      Channels: {device['max_input_channels']}, Sample Rate: {device['default_samplerate']} Hz")
 
     def list_voices(self):
         """List available TTS voices"""
