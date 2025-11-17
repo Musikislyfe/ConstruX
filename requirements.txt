@@ -1,0 +1,28 @@
+# Voice Mode for Claude Code Desktop - Dependencies
+
+# Speech Recognition
+SpeechRecognition>=3.10.0
+
+# Audio I/O (replaces PyAudio with sounddevice)
+sounddevice>=0.4.6
+numpy>=1.20.0
+
+# Text-to-Speech
+pyttsx3>=2.90
+
+# Hotkey Support
+keyboard>=0.13.5
+
+# Additional utilities
+pyperclip>=1.8.2
+
+# For Linux users (alternative to xclip)
+# pyperclip uses xclip or xsel on Linux
+
+# Optional: Advanced TTS (uncomment if needed)
+# gTTS>=2.3.0  # Google Text-to-Speech (requires internet)
+# pydub>=0.25.1  # Audio processing
+
+# Optional: Advanced speech recognition (uncomment if needed)
+# whisper>=1.0.0  # OpenAI Whisper for offline speech recognition
+# torch>=2.0.0  # Required for Whisper
