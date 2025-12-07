@@ -1,0 +1,10 @@
+# Multi-AI Justice League Framework
+# Required dependencies
+
+# AI Model APIs
+anthropic>=0.18.0
+google-generativeai>=0.3.0
+openai>=1.0.0
+
+# Optional: Python-dotenv for environment variable management
+python-dotenv>=1.0.0

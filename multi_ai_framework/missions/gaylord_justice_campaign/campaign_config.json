@@ -1,0 +1,82 @@
+{
+  "mission_name": "Gaylord Justice Campaign",
+  "case_id": "gaylord_v_employer_2024",
+  "complainant_name": "Gaylord",
+  "employer_name": "Employer Name",
+  "location": "3355 Wilshire Blvd, Los Angeles, CA",
+
+  "case_summary": "Wrongful termination following disability accommodation requests and safety violation complaints. Employee was terminated in retaliation for reporting building safety violations and requesting reasonable accommodations for disability.",
+
+  "claim_types": [
+    "wrongful_termination",
+    "disability_discrimination",
+    "retaliation",
+    "failure_to_accommodate"
+  ],
+
+  "issues": [
+    "safety_violations",
+    "building_code_violations",
+    "disability_accommodation_denial"
+  ],
+
+  "disability_type": "Medical condition requiring accommodations",
+  "denied_accommodations": "Work schedule modifications, ergonomic equipment",
+
+  "safety_violations": [
+    "Building safety violations at 3355 Wilshire Blvd",
+    "OSHA workplace safety violations",
+    "Inadequate accessibility for disabled workers"
+  ],
+
+  "discrimination_description": "Employee was denied reasonable accommodations, subjected to discriminatory treatment based on disability, and ultimately terminated after complaining about unsafe working conditions.",
+
+  "adverse_actions": "Termination, negative performance reviews, denial of accommodations",
+
+  "employment_dates": "2020-2024",
+  "position": "Employee",
+
+  "economic_damages": 50000,
+  "emotional_distress_severity": 8,
+  "punitive_damages_viable": true,
+
+  "jurisdiction": "California",
+  "public_interest": 7,
+
+  "legal_context": {
+    "favorable_precedents": 3,
+    "average_settlement": 200000
+  },
+
+  "discrimination_facts": [
+    "Requested reasonable accommodations for disability",
+    "Accommodations denied without interactive process",
+    "Complained about building safety violations",
+    "Terminated shortly after complaints",
+    "Pattern of retaliation documented"
+  ],
+
+  "safety_evidence": [
+    "Building violation citations",
+    "OSHA complaint documentation",
+    "Photos of unsafe conditions",
+    "Inspection reports"
+  ],
+
+  "ada_evidence": [
+    "Medical documentation of disability",
+    "Written accommodation requests",
+    "Denial letters",
+    "Email correspondence"
+  ],
+
+  "employment_evidence": [
+    "Personnel file",
+    "Performance reviews",
+    "Email communications",
+    "Termination letter",
+    "Witness statements"
+  ],
+
+  "complainant_statement": "I am standing up for my rights and the safety of all workers. No one should face discrimination or retaliation for reporting unsafe conditions or requesting accommodations they are entitled to under the law."
+}
