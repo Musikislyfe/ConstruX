@@ -179,7 +179,6 @@ class VoiceMode:
             if audio_data is None:
                 return None
 
-            self.is_listening = False
             print("🔄 Processing speech...")
 
             # Create AudioData object for SpeechRecognition
