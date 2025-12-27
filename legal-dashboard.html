@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalPro Dashboard - Case Management System</title>
+    <meta name="description" content="Professional legal case management dashboard with real-time analytics, document tracking, and client management.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --primary: #1e40af;
+            --secondary: #0f172a;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --sidebar-width: 280px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #f1f5f9;
+            overflow-x: hidden;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: var(--sidebar-width);
+            background: linear-gradient(180deg, #1e40af 0%, #1e3a8a 100%);
+            color: white;
+            padding: 24px;
+            overflow-y: auto;
+            z-index: 100;
+            box-shadow: 4px 0 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            padding: 24px;
+            min-height: 100vh;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: white;
+            font-weight: 600;
+        }
+
+        .nav-item-icon {
+            margin-right: 12px;
+            font-size: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge-success {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        .badge-info {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e3a8a;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cpath d='m21 21-4.35-4.35'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table thead th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            font-weight: 700;
+            color: #475569;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+
+        .table tbody td {
+            padding: 16px 12px;
+            border-bottom: 1px solid #f1f5f9;
+            color: #334155;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 20px;
+        }
+
+        .logo {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .user-profile:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .notification-badge {
+            position: relative;
+        }
+
+        .notification-badge::after {
+            content: '3';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .case-priority-high {
+            border-left-color: var(--danger);
+        }
+
+        .case-priority-medium {
+            border-left-color: var(--warning);
+        }
+
+        .case-priority-low {
+            border-left-color: var(--success);
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .grid-auto {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">LP</div>
+        <h2 class="text-xl font-bold mb-8">LegalPro</h2>
+
+        <nav>
+            <a href="#" class="nav-item active">
+                <span class="nav-item-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">⚖️</span>
+                <span>Cases</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">👥</span>
+                <span>Clients</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">📁</span>
+                <span>Documents</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">📅</span>
+                <span>Calendar</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">⏰</span>
+                <span>Time Tracking</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">💰</span>
+                <span>Billing</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">📈</span>
+                <span>Analytics</span>
+            </a>
+        </nav>
+
+        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+            <a href="#" class="nav-item">
+                <span class="nav-item-icon">🚪</span>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="header-top">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+                <p class="text-gray-600 mt-1">Welcome back, Sarah Johnson</p>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="btn btn-primary">
+                    <span>➕ New Case</span>
+                </button>
+                <div class="notification-badge">
+                    <button class="btn btn-outline" style="padding: 10px 16px;">
+                        <span style="font-size: 18px;">🔔</span>
+                    </button>
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">SJ</div>
+                    <div>
+                        <div class="font-semibold text-sm">Sarah Johnson</div>
+                        <div class="text-xs text-gray-500">Senior Partner</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid-auto mb-8 animate-fade-in">
+            <div class="stat-card">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Active Cases</p>
+                        <h3 class="text-3xl font-bold text-gray-900">42</h3>
+                        <p class="text-green-600 text-sm mt-2">↗ +12% this month</p>
+                    </div>
+                    <div style="font-size: 36px; opacity: 0.2;">⚖️</div>
+                </div>
+            </div>
+
+            <div class="stat-card" style="border-left-color: var(--success);">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Cases Won</p>
+                        <h3 class="text-3xl font-bold text-gray-900">156</h3>
+                        <p class="text-green-600 text-sm mt-2">↗ 94% success rate</p>
+                    </div>
+                    <div style="font-size: 36px; opacity: 0.2;">🏆</div>
+                </div>
+            </div>
+
+            <div class="stat-card" style="border-left-color: var(--warning);">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Billable Hours</p>
+                        <h3 class="text-3xl font-bold text-gray-900">1,247</h3>
+                        <p class="text-gray-600 text-sm mt-2">This quarter</p>
+                    </div>
+                    <div style="font-size: 36px; opacity: 0.2;">⏰</div>
+                </div>
+            </div>
+
+            <div class="stat-card" style="border-left-color: var(--accent);">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Revenue (YTD)</p>
+                        <h3 class="text-3xl font-bold text-gray-900">$2.4M</h3>
+                        <p class="text-green-600 text-sm mt-2">↗ +28% vs last year</p>
+                    </div>
+                    <div style="font-size: 36px; opacity: 0.2;">💰</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Recent Cases -->
+            <div class="lg:col-span-2 card animate-fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-900">Recent Cases</h2>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 text-sm font-medium">View All →</a>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Case ID</th>
+                                <th>Client Name</th>
+                                <th>Case Type</th>
+                                <th>Status</th>
+                                <th>Deadline</th>
+                                <th>Priority</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="font-semibold">#2024-1847</td>
+                                <td>Acme Corporation</td>
+                                <td>Contract Dispute</td>
+                                <td><span class="badge badge-warning">In Progress</span></td>
+                                <td>Jan 15, 2025</td>
+                                <td><span class="badge badge-danger">High</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">#2024-1823</td>
+                                <td>John Smith</td>
+                                <td>Personal Injury</td>
+                                <td><span class="badge badge-info">Discovery</span></td>
+                                <td>Feb 28, 2025</td>
+                                <td><span class="badge badge-warning">Medium</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">#2024-1809</td>
+                                <td>Tech Innovations LLC</td>
+                                <td>IP Litigation</td>
+                                <td><span class="badge badge-warning">Trial Prep</span></td>
+                                <td>Jan 22, 2025</td>
+                                <td><span class="badge badge-danger">High</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">#2024-1795</td>
+                                <td>Maria Garcia</td>
+                                <td>Employment Law</td>
+                                <td><span class="badge badge-success">Settled</span></td>
+                                <td>Dec 30, 2024</td>
+                                <td><span class="badge badge-success">Low</span></td>
+                            </tr>
+                            <tr>
+                                <td class="font-semibold">#2024-1781</td>
+                                <td>Global Enterprises</td>
+                                <td>Mergers & Acquisitions</td>
+                                <td><span class="badge badge-info">Due Diligence</span></td>
+                                <td>Mar 10, 2025</td>
+                                <td><span class="badge badge-warning">Medium</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Upcoming Deadlines -->
+            <div class="card animate-fade-in">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Upcoming Deadlines</h2>
+
+                <div class="space-y-4">
+                    <div class="p-4 bg-red-50 border-l-4 border-red-500 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-900 text-sm">Motion to Dismiss</h4>
+                            <span class="text-xs text-red-600 font-bold">TODAY</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">Case #2024-1847</p>
+                        <p class="text-xs text-gray-500">Due: 5:00 PM</p>
+                    </div>
+
+                    <div class="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-900 text-sm">Discovery Response</h4>
+                            <span class="text-xs text-yellow-700 font-bold">2 DAYS</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">Case #2024-1823</p>
+                        <p class="text-xs text-gray-500">Due: Dec 29, 2024</p>
+                    </div>
+
+                    <div class="p-4 bg-blue-50 border-l-4 border-blue-500 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-900 text-sm">Client Meeting Prep</h4>
+                            <span class="text-xs text-blue-700 font-bold">5 DAYS</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">Case #2024-1809</p>
+                        <p class="text-xs text-gray-500">Due: Jan 1, 2025</p>
+                    </div>
+
+                    <div class="p-4 bg-green-50 border-l-4 border-green-500 rounded">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-semibold text-gray-900 text-sm">Contract Review</h4>
+                            <span class="text-xs text-green-700 font-bold">1 WEEK</span>
+                        </div>
+                        <p class="text-xs text-gray-600 mb-1">Case #2024-1781</p>
+                        <p class="text-xs text-gray-500">Due: Jan 3, 2025</p>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline w-full mt-6">View All Deadlines</button>
+            </div>
+        </div>
+
+        <!-- Additional Widgets -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Case Distribution -->
+            <div class="card animate-fade-in">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Case Distribution</h2>
+
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Contract Law</span>
+                            <span class="text-sm font-bold text-gray-900">35%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 35%;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Personal Injury</span>
+                            <span class="text-sm font-bold text-gray-900">28%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 28%;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Corporate Law</span>
+                            <span class="text-sm font-bold text-gray-900">20%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 20%;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Employment Law</span>
+                            <span class="text-sm font-bold text-gray-900">12%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 12%;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Other</span>
+                            <span class="text-sm font-bold text-gray-900">5%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 5%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="card animate-fade-in">
+                <h2 class="text-xl font-bold text-gray-900 mb-6">Recent Activity</h2>
+
+                <div class="space-y-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                            <span class="text-blue-600">📄</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Document uploaded to Case #2024-1847</p>
+                            <p class="text-xs text-gray-500">2 hours ago by Michael Chen</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center flex-shrink-0">
+                            <span class="text-green-600">✓</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Case #2024-1795 marked as settled</p>
+                            <p class="text-xs text-gray-500">5 hours ago by Sarah Johnson</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
+                            <span class="text-yellow-600">💬</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">New comment on Case #2024-1823</p>
+                            <p class="text-xs text-gray-500">Yesterday by Jennifer Lee</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                            <span class="text-purple-600">👤</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">New client added: Global Enterprises</p>
+                            <p class="text-xs text-gray-500">2 days ago by Robert Kim</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+                            <span class="text-red-600">⚠️</span>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Deadline approaching for Case #2024-1847</p>
+                            <p class="text-xs text-gray-500">3 days ago by System</p>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="btn btn-outline w-full mt-6">View All Activity</button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="card mt-6 animate-fade-in">
+            <h2 class="text-xl font-bold text-gray-900 mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button class="btn btn-outline flex flex-col items-center py-6">
+                    <span style="font-size: 32px; margin-bottom: 8px;">➕</span>
+                    <span>New Case</span>
+                </button>
+                <button class="btn btn-outline flex flex-col items-center py-6">
+                    <span style="font-size: 32px; margin-bottom: 8px;">👤</span>
+                    <span>Add Client</span>
+                </button>
+                <button class="btn btn-outline flex flex-col items-center py-6">
+                    <span style="font-size: 32px; margin-bottom: 8px;">📁</span>
+                    <span>Upload Document</span>
+                </button>
+                <button class="btn btn-outline flex flex-col items-center py-6">
+                    <span style="font-size: 32px; margin-bottom: 8px;">⏰</span>
+                    <span>Log Time</span>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.mobile-menu-toggle');
+        const sidebar = document.querySelector('.sidebar');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('mobile-open');
+            });
+        }
+
+        // Smooth scrolling and animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.card, .stat-card').forEach(el => {
+            observer.observe(el);
+        });
+
+        // Simulate real-time updates
+        function updateNotifications() {
+            const badge = document.querySelector('.notification-badge::after');
+            // Update logic would go here
+        }
+
+        // Initialize tooltips and other interactive elements
+        console.log('LegalPro Dashboard initialized');
+    </script>
+</body>
+</html>
